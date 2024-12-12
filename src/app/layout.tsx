@@ -1,5 +1,5 @@
-import { Metadata } from 'next';
-import * as React from 'react';
+import type { Metadata } from 'next';
+import type * as React from 'react';
 
 import '@/styles/globals.css';
 // !STARTERCONF This is for demo purposes, remove @/styles/colors.css import immediately
