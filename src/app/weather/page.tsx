@@ -218,7 +218,7 @@ function WeatherPageContent() {
               <div className='flex items-start space-x-4'>
                 <span
                   className={clsx('text-sm space-x-4', {
-                    'text-blue-500': item.averageTemp < 75,
+                    'text-amber-500': item.averageTemp < 75,
                     'text-orange-500':
                       item.averageTemp >= 75 && item.averageTemp <= 90,
                     'text-red-500': item.averageTemp > 90,
@@ -309,13 +309,13 @@ function WeatherPageContent() {
   return (
     <main className='flex-1'>
       {/* Hero strip - matches homepage */}
-      <section className='relative overflow-hidden bg-gradient-to-br from-sky-500 via-sky-600 to-emerald-600 px-4 py-10 md:py-14'>
+      <section className='relative overflow-hidden bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 px-4 py-10 md:py-14'>
         <div className='absolute inset-0 bg-white/5' aria-hidden />
         <div className='layout relative text-center'>
           <h1 className='font-primary text-3xl font-bold tracking-tight text-white drop-shadow-sm md:text-4xl'>
             Go Somewhere Warm
           </h1>
-          <p className='mt-2 text-sky-100 md:text-lg'>
+          <p className='mt-2 text-amber-50 md:text-lg'>
             Discover the best destinations with ideal weather over the next{' '}
             {forecastDays} days.
           </p>
@@ -387,12 +387,12 @@ export default function WeatherPage() {
     <Suspense
       fallback={
         <main className='flex-1'>
-          <section className='relative overflow-hidden bg-gradient-to-br from-sky-500 via-sky-600 to-emerald-600 px-4 py-10 md:py-14'>
+          <section className='relative overflow-hidden bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 px-4 py-10 md:py-14'>
             <div className='layout relative text-center'>
               <h1 className='font-primary text-3xl font-bold tracking-tight text-white drop-shadow-sm md:text-4xl'>
                 Go Somewhere Warm
               </h1>
-              <p className='mt-2 text-sky-100'>Loading…</p>
+              <p className='mt-2 text-amber-50'>Loading…</p>
             </div>
           </section>
         </main>
