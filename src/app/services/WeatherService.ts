@@ -31,6 +31,26 @@ export class WeatherService {
     this.geocoderService = Container.get(GeocoderService);
   }
 
+  /** Run async tasks with a max concurrency to avoid rate limits (e.g. Open-Meteo). */
+  private async runWithConcurrencyLimit<T, R>(
+    items: T[],
+    limit: number,
+    fn: (item: T, index: number) => Promise<R>
+  ): Promise<R[]> {
+    const results: R[] = new Array(items.length);
+    let index = 0;
+    async function worker(): Promise<void> {
+      while (index < items.length) {
+        const i = index++;
+        results[i] = await fn(items[i], i);
+      }
+    }
+    await Promise.all(
+      Array.from({ length: Math.min(limit, items.length) }, () => worker())
+    );
+    return results;
+  }
+
   private getCacheKey({
     lat,
     lon,
@@ -180,17 +200,17 @@ export class WeatherService {
       tempWeight: number;
     };
   }) {
-    const promises = [];
-    for (let i = 0; i < topTravelDestinations.length; i++) {
-      const destination = topTravelDestinations[i];
-      const promise = this.getSingleWeatherReport({
-        fromCity: originCityName,
-        toCity: destination.name,
-        days,
-      });
-      promises.push(promise);
-    }
-    const resolvedPromises = await Promise.all(promises);
+    const OPEN_METEO_CONCURRENCY = 5;
+    const resolvedPromises = await this.runWithConcurrencyLimit(
+      topTravelDestinations,
+      OPEN_METEO_CONCURRENCY,
+      (destination) =>
+        this.getSingleWeatherReport({
+          fromCity: originCityName,
+          toCity: destination.name,
+          days,
+        })
+    );
 
     // Weighted sort
     const maxDistance = Math.max(

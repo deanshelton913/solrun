@@ -21,7 +21,8 @@ export class CacheService {
     if (CacheService.client) {
       return CacheService.client;
     }
-    CacheService.client = await createClient();
+    const url = process.env.REDIS_URL;
+    CacheService.client = url ? createClient({ url }) : createClient();
     await CacheService.client.connect();
     return CacheService.client;
   }

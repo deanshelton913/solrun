@@ -40,18 +40,31 @@ export class GeocoderService {
     this.httpService = Container.get(HttpService);
   }
 
-  private async uncachedGeocodeCityName(props: GeocoderParams) {
-    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURI(
-      props.cityName
+  private async fetchFirstResult(
+    name: string
+  ): Promise<GeoCodeResultItem | null> {
+    const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
+      name
     )}`;
     const res = await this.httpService.makeRequest<{
-      results: GeoCodeResultItem[];
+      results?: GeoCodeResultItem[];
     }>({ method: 'GET', url });
-    if (res) {
-      return res.data.results[0];
+    const raw = res?.data?.results;
+    const results = Array.isArray(raw) ? raw : [];
+    return results[0] ?? null;
+  }
+
+  private async uncachedGeocodeCityName(props: GeocoderParams) {
+    let first = await this.fetchFirstResult(props.cityName);
+    if (first) return first;
+    // Open-Meteo often returns no results for "City, Country"; try city only
+    const cityOnly = props.cityName.split(',')[0]?.trim();
+    if (cityOnly && cityOnly !== props.cityName) {
+      first = await this.fetchFirstResult(cityOnly);
     }
+    if (first) return first;
     throw new Error(
-      `Failure By Design: null geocode result for ${props.cityName}`
+      `Failure By Design: null or empty geocode result for ${props.cityName}`
     );
   }
 

@@ -10,6 +10,7 @@ export default {
     extend: {
       fontFamily: {
         primary: ['Inter', ...defaultTheme.fontFamily.sans],
+        wordmark: ['Funnel Sans', ...defaultTheme.fontFamily.sans],
       },
       colors: {
         primary: {

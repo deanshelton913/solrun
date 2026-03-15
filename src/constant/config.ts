@@ -1,7 +1,13 @@
 export const siteConfig = {
-  title: 'Next.js + Tailwind CSS + TypeScript Starter',
+  title: 'SolRun',
   description:
-    'A starter for Next.js, Tailwind CSS, and TypeScript with Absolute Import, Seo, Link component, pre-configured with Husky',
-  /** Without additional '/' on the end, e.g. https://theodorusclarence.com */
-  url: 'https://tsnext-tw.thcl.dev',
+    'Find your perfect weather getaway. Pick your city, see top destinations ranked by forecast, and check flight prices—all in one place.',
+  /** Without additional '/' on the end, e.g. https://solrun.app */
+  url: 'https://solrun.app',
+  /**
+   * Default base URL for "Compare flights" partner links (IATA codes appended).
+   * Override with NEXT_PUBLIC_FLIGHT_SEARCH_BASE_URL for affiliate URLs.
+   * Set to empty string to hide the links.
+   */
+  flightSearchBaseUrl: 'https://www.skyscanner.com/transport/flights',
 };

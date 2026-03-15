@@ -1,72 +1,116 @@
 'use client';
 
-import Head from 'next/head';
-import * as React from 'react';
-import '@/lib/env';
+import { CloudSun, MapPin, Plane } from 'lucide-react';
 
-import ArrowLink from '@/components/links/ArrowLink';
 import ButtonLink from '@/components/links/ButtonLink';
-import UnderlineLink from '@/components/links/UnderlineLink';
-import UnstyledLink from '@/components/links/UnstyledLink';
 
-/**
- * SVGR Support
- * Caveat: No React Props Type.
- *
- * You can override the next-env if the type is important to you
- * @see https://stackoverflow.com/questions/68103844/how-to-override-next-js-svg-module-declaration
- */
-import Logo from '~/svg/Logo.svg';
-
-// !STARTERCONF -> Select !STARTERCONF and CMD + SHIFT + F
-// Before you begin editing, follow all comments with `STARTERCONF`,
-// to customize the default configuration.
+const features = [
+  {
+    icon: MapPin,
+    title: 'Pick your starting city',
+    description:
+      'Choose where you’re leaving from. We compare weather across top travel destinations so you see the best options at a glance.',
+  },
+  {
+    icon: CloudSun,
+    title: 'See weather-ranked destinations',
+    description:
+      'Get a ranked list with daily forecasts, average temps, and how far each place is—by walking, biking, driving, or flying.',
+  },
+  {
+    icon: Plane,
+    title: 'Check flight prices',
+    description:
+      'One click to see real flight prices to any destination. Plan your escape to the sun (or snow) with confidence.',
+  },
+];
 
 export default function HomePage() {
   return (
-    <main>
-      <Head>
-        <title>Hi</title>
-      </Head>
-      <section className='bg-white'>
-        <div className='layout relative flex min-h-screen flex-col items-center justify-center py-12 text-center'>
-          <Logo className='w-16' />
-          <h1 className='mt-4'>Next.js + Tailwind CSS + TypeScript Starter</h1>
-          <p className='mt-2 text-sm text-gray-800'>
-            A starter for Next.js, Tailwind CSS, and TypeScript with Absolute
-            Import, Seo, Link component, pre-configured with Husky{' '}
-          </p>
-          <p className='mt-2 text-sm text-gray-700'>
-            <ArrowLink href='https://github.com/theodorusclarence/ts-nextjs-tailwind-starter'>
-              See the repository
-            </ArrowLink>
-          </p>
-
-          <ButtonLink className='mt-6' href='/components' variant='light'>
-            See all components
-          </ButtonLink>
-
-          <UnstyledLink
-            href='https://vercel.com/new/git/external?repository-url=https%3A%2F%2Fgithub.com%2Ftheodorusclarence%2Fts-nextjs-tailwind-starter'
-            className='mt-4'
-          >
+    <>
+      <main className='flex-1'>
+        {/* Hero */}
+        <section className='relative overflow-hidden bg-gradient-to-br from-sky-500 via-sky-600 to-emerald-600 px-4 py-20 md:py-28'>
+          <div className='absolute inset-0 bg-white/5' aria-hidden />
+          <div className='layout relative flex flex-col items-center text-center'>
+            <h1 className='font-primary text-4xl font-bold tracking-tight text-white drop-shadow-sm md:text-5xl lg:text-6xl'>
+              Find your perfect weather getaway
+            </h1>
+            <p className='mt-4 max-w-2xl text-lg text-sky-100 md:text-xl'>
+              Pick your city. See top destinations ranked by forecast. Check
+              flight prices. Plan your next trip around the weather that
+              actually matters.
+            </p>
+            <ButtonLink
+              href='/weather'
+              variant='light'
+              size='base'
+              className='mt-8 bg-white px-6 py-3 text-base font-semibold text-sky-700 shadow-lg hover:bg-sky-50'
+            >
+              Explore Weather →
+            </ButtonLink>
+          </div>
+          {/* Decorative weather icons */}
+          <div className='absolute bottom-8 left-1/4 hidden opacity-20 md:block'>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src='/svg/wi-day-sunny.svg' alt='' className='h-16 w-16' />
+          </div>
+          <div className='absolute right-1/4 top-12 hidden opacity-20 md:block'>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              width='92'
-              height='32'
-              src='https://vercel.com/button'
-              alt='Deploy with Vercel'
+              src='/svg/wi-day-cloudy-high.svg'
+              alt=''
+              className='h-14 w-14'
             />
-          </UnstyledLink>
+          </div>
+        </section>
 
-          <footer className='absolute bottom-2 text-gray-700'>
-            © {new Date().getFullYear()} By{' '}
-            <UnderlineLink href='https://theodorusclarence.com?ref=tsnextstarter'>
-              Theodorus Clarence
-            </UnderlineLink>
-          </footer>
-        </div>
-      </section>
-    </main>
+        {/* Features */}
+        <section className='layout py-16 md:py-24'>
+          <h2 className='text-center text-2xl font-bold text-slate-800 md:text-3xl'>
+            How it works
+          </h2>
+          <p className='mx-auto mt-2 max-w-xl text-center text-slate-600'>
+            Three steps to your next sunny (or snowy) escape.
+          </p>
+          <div className='mt-12 grid gap-8 md:grid-cols-3'>
+            {features.map(({ icon: Icon, title, description }) => (
+              <div
+                key={title}
+                className='rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-shadow hover:shadow-md'
+              >
+                <div className='flex h-12 w-12 items-center justify-center rounded-xl bg-sky-100 text-sky-600'>
+                  <Icon className='h-6 w-6' strokeWidth={2} />
+                </div>
+                <h3 className='mt-4 font-semibold text-slate-800'>{title}</h3>
+                <p className='mt-2 text-sm text-slate-600'>{description}</p>
+              </div>
+            ))}
+          </div>
+          <div className='mt-12 text-center'>
+            <ButtonLink href='/weather' variant='primary' size='base'>
+              Try it now
+            </ButtonLink>
+          </div>
+        </section>
+
+        {/* CTA strip */}
+        <section className='border-t border-slate-200 bg-slate-100 py-12'>
+          <div className='layout text-center'>
+            <p className='text-lg font-medium text-slate-700'>
+              Ready to find where the weather’s best?
+            </p>
+            <ButtonLink
+              href='/weather'
+              variant='dark'
+              size='base'
+              className='mt-4'
+            >
+              Go to Weather Explorer
+            </ButtonLink>
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
