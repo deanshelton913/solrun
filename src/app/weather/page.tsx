@@ -90,7 +90,7 @@ function WeatherPageContent() {
   const [openForecastRowIndex, setOpenForecastRowIndex] = useState<
     number | null
   >(null);
-  const [searchControlsOpen, setSearchControlsOpen] = useState(false);
+  const [searchControlsOpen, setSearchControlsOpen] = useState(true);
   const [sortCriteria, setSortCriteria] = useState<SortCriteria>({
     ...DEFAULT_SORT_CRITERIA,
   });
