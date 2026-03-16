@@ -7,6 +7,7 @@ import { Suspense, useEffect, useState } from 'react';
 
 import { AdSenseUnit } from '@/components/ads/AdSenseUnit';
 
+import type { OriginCityOption } from '@/app/weather/components';
 import {
   DestinationDetailCard,
   ForecastDetail,
@@ -78,11 +79,43 @@ function WeatherPageContent() {
   );
 
   const [originCityName, setOriginCityName] = useState(city);
+  const [startingCitiesOptions, setStartingCitiesOptions] = useState<
+    OriginCityOption[]
+  >(topTravelDestinations.map((d) => ({ name: d.name })));
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
   const [openForecastRowIndex, setOpenForecastRowIndex] = useState<
     number | null
   >(null);
   const router = useRouter();
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/data/starting-cities.json')
+      .then((res) => (res.ok ? res.json() : null))
+      .then((list: { name: string }[] | null) => {
+        if (cancelled || !Array.isArray(list)) return;
+        const curatedNames = new Set<string>();
+        for (const d of topTravelDestinations) {
+          curatedNames.add(d.name.toLowerCase());
+          const cityPart = d.name.split(',')[0].trim().toLowerCase();
+          if (cityPart) curatedNames.add(cityPart);
+        }
+        const extra = list.filter((c) => {
+          if (!c.name) return false;
+          if (curatedNames.has(c.name.toLowerCase())) return false;
+          const cityPart = c.name.split(',')[0].trim().toLowerCase();
+          return !curatedNames.has(cityPart);
+        });
+        const curated = topTravelDestinations.map((d) => ({ name: d.name }));
+        setStartingCitiesOptions([...curated, ...extra]);
+      })
+      .catch(() => {
+        /* ignore: keep default options if starting-cities fetch fails */
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const {
     geoData,
@@ -389,7 +422,7 @@ function WeatherPageContent() {
                 label='Starting city'
                 value={originCityName}
                 onChange={setOriginCityName}
-                options={topTravelDestinations}
+                options={startingCitiesOptions}
                 placeholder='Search starting city…'
               />
             </div>
