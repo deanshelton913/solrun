@@ -11,12 +11,30 @@ const MAX_DESTINATIONS_TO_FETCH = 25;
 /** Max results returned (top N after ranking). */
 const MAX_WEATHER_RESULTS = 20;
 
+function parseFloatParam(
+  sp: URLSearchParams,
+  key: string,
+  fallback: number
+): number {
+  const v = sp.get(key);
+  if (v == null || v === '') return fallback;
+  const n = Number(v);
+  return Number.isFinite(n) ? n : fallback;
+}
+
 export async function GET(request: NextRequest) {
   const weatherService = Container.get(WeatherService);
 
   const sp = request.nextUrl.searchParams;
   const originCityName = String(sp.get('originCityName'));
   const days = Number(sp.get('forecastDays'));
+
+  const sortCriteria = {
+    idealTemp: parseFloatParam(sp, 'idealTemp', 85.0),
+    distanceWeight: parseFloatParam(sp, 'distanceWeight', 0.4),
+    scoreWeight: parseFloatParam(sp, 'scoreWeight', 0.6),
+    tempWeight: parseFloatParam(sp, 'tempWeight', 0.3),
+  };
 
   const destinationsToFetch = topTravelDestinations.slice(
     0,
@@ -27,12 +45,7 @@ export async function GET(request: NextRequest) {
     originCityName,
     topTravelDestinations: destinationsToFetch,
     days,
-    sortCriteria: {
-      idealTemp: 85.0,
-      distanceWeight: 0.4,
-      scoreWeight: 0.6,
-      tempWeight: 0.3,
-    },
+    sortCriteria,
   });
 
   const limitedGeoData = geoData.slice(0, MAX_WEATHER_RESULTS);

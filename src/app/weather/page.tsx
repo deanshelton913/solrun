@@ -1,9 +1,9 @@
 'use client';
 
 import clsx from 'clsx';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 
 import { AdSenseUnit } from '@/components/ads/AdSenseUnit';
 
@@ -16,7 +16,11 @@ import {
 import { siteConfig } from '@/constant/config';
 
 import { topTravelDestinations } from '../api/weather/const';
-import { useWeather } from '../hooks/useWeather';
+import {
+  type SortCriteria,
+  DEFAULT_SORT_CRITERIA,
+  useWeather,
+} from '../hooks/useWeather';
 import PartlyCloudy from '../../../public/svg/wi-day-cloudy-high.svg';
 import Lightning from '../../../public/svg/wi-day-lightning.svg';
 import ClearSky from '../../../public/svg/wi-day-sunny.svg';
@@ -86,7 +90,25 @@ function WeatherPageContent() {
   const [openForecastRowIndex, setOpenForecastRowIndex] = useState<
     number | null
   >(null);
+  const [searchControlsOpen, setSearchControlsOpen] = useState(false);
+  const [sortCriteria, setSortCriteria] = useState<SortCriteria>({
+    ...DEFAULT_SORT_CRITERIA,
+  });
+  const [debouncedSortCriteria, setDebouncedSortCriteria] =
+    useState<SortCriteria>(() => ({ ...DEFAULT_SORT_CRITERIA }));
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      setDebouncedSortCriteria(sortCriteria);
+      debounceRef.current = null;
+    }, 400);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [sortCriteria]);
 
   useEffect(() => {
     let cancelled = false;
@@ -121,7 +143,7 @@ function WeatherPageContent() {
     geoData,
     isLoading: weatherLoading,
     error: weatherError,
-  } = useWeather(originCityName, forecastDays);
+  } = useWeather(originCityName, forecastDays, debouncedSortCriteria);
 
   function toggleRowExpanded(index: number) {
     setExpandedRows((prev) => {
@@ -442,6 +464,114 @@ function WeatherPageContent() {
                 ))}
               </select>
             </div>
+          </div>
+
+          <div className='mt-6 border-t border-slate-200 pt-6'>
+            <button
+              type='button'
+              onClick={() => setSearchControlsOpen((o) => !o)}
+              className='flex w-full items-center justify-between rounded-xl py-2 text-left font-semibold text-slate-800 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500/20'
+              aria-expanded={searchControlsOpen}
+            >
+              Search controls
+              {searchControlsOpen ? (
+                <ChevronUp className='h-5 w-5 text-slate-500' />
+              ) : (
+                <ChevronDown className='h-5 w-5 text-slate-500' />
+              )}
+            </button>
+            {searchControlsOpen && (
+              <div className='mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-4'>
+                <div>
+                  <label className='block font-medium text-slate-700'>
+                    Ideal temperature (°F)
+                  </label>
+                  <input
+                    type='range'
+                    min={60}
+                    max={95}
+                    step={1}
+                    value={sortCriteria.idealTemp}
+                    onChange={(e) =>
+                      setSortCriteria((s) => ({
+                        ...s,
+                        idealTemp: Number(e.target.value),
+                      }))
+                    }
+                    className='mt-1 w-full accent-primary-500'
+                  />
+                  <span className='mt-1 block text-sm text-slate-600'>
+                    {sortCriteria.idealTemp}°F
+                  </span>
+                </div>
+                <div>
+                  <label className='block font-medium text-slate-700'>
+                    Prioritize closer
+                  </label>
+                  <input
+                    type='range'
+                    min={0}
+                    max={1}
+                    step={0.1}
+                    value={sortCriteria.distanceWeight}
+                    onChange={(e) =>
+                      setSortCriteria((s) => ({
+                        ...s,
+                        distanceWeight: Number(e.target.value),
+                      }))
+                    }
+                    className='mt-1 w-full accent-primary-500'
+                  />
+                  <span className='mt-1 block text-sm text-slate-600'>
+                    {sortCriteria.distanceWeight.toFixed(1)}
+                  </span>
+                </div>
+                <div>
+                  <label className='block font-medium text-slate-700'>
+                    Prioritize sunshine
+                  </label>
+                  <input
+                    type='range'
+                    min={0}
+                    max={1}
+                    step={0.1}
+                    value={sortCriteria.scoreWeight}
+                    onChange={(e) =>
+                      setSortCriteria((s) => ({
+                        ...s,
+                        scoreWeight: Number(e.target.value),
+                      }))
+                    }
+                    className='mt-1 w-full accent-primary-500'
+                  />
+                  <span className='mt-1 block text-sm text-slate-600'>
+                    {sortCriteria.scoreWeight.toFixed(1)}
+                  </span>
+                </div>
+                <div>
+                  <label className='block font-medium text-slate-700'>
+                    Prioritize temp near ideal
+                  </label>
+                  <input
+                    type='range'
+                    min={0}
+                    max={1}
+                    step={0.1}
+                    value={sortCriteria.tempWeight}
+                    onChange={(e) =>
+                      setSortCriteria((s) => ({
+                        ...s,
+                        tempWeight: Number(e.target.value),
+                      }))
+                    }
+                    className='mt-1 w-full accent-primary-500'
+                  />
+                  <span className='mt-1 block text-sm text-slate-600'>
+                    {sortCriteria.tempWeight.toFixed(1)}
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 

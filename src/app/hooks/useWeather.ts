@@ -24,6 +24,20 @@ export interface WeatherResponse {
   geoData: WeatherGeoData[];
 }
 
+export interface SortCriteria {
+  idealTemp: number;
+  distanceWeight: number;
+  scoreWeight: number;
+  tempWeight: number;
+}
+
+const DEFAULT_SORT_CRITERIA: SortCriteria = {
+  idealTemp: 85.0,
+  distanceWeight: 0.4,
+  scoreWeight: 0.6,
+  tempWeight: 0.3,
+};
+
 const WEATHER_QUERY_KEY_PREFIX = 'weather' as const;
 
 /** Normalize for cache key consistency (e.g. trim, future: lowercase). */
@@ -37,31 +51,54 @@ function normalizeOriginCity(originCityName: string): string {
  */
 export function weatherQueryKey(
   originCityName: string,
-  forecastDays: number
-): [string, string, number] {
+  forecastDays: number,
+  sortCriteria?: SortCriteria | null
+): [string, string, number, SortCriteria] {
+  const criteria = sortCriteria ?? DEFAULT_SORT_CRITERIA;
   return [
     WEATHER_QUERY_KEY_PREFIX,
     normalizeOriginCity(originCityName),
     forecastDays,
+    criteria,
   ];
+}
+
+function buildWeatherUrl(
+  originCityName: string,
+  forecastDays: number,
+  sortCriteria: SortCriteria
+): string {
+  const sp = new URLSearchParams({
+    originCityName,
+    forecastDays: String(forecastDays),
+    idealTemp: String(sortCriteria.idealTemp),
+    distanceWeight: String(sortCriteria.distanceWeight),
+    scoreWeight: String(sortCriteria.scoreWeight),
+    tempWeight: String(sortCriteria.tempWeight),
+  });
+  return `/api/weather?${sp.toString()}`;
 }
 
 async function fetchWeatherResponse(
   originCityName: string,
-  forecastDays: number
+  forecastDays: number,
+  sortCriteria: SortCriteria
 ): Promise<WeatherResponse> {
-  const url = `/api/weather?originCityName=${encodeURIComponent(
-    originCityName
-  )}&forecastDays=${forecastDays}`;
+  const url = buildWeatherUrl(originCityName, forecastDays, sortCriteria);
   const res = await fetch(url);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
-export function useWeather(originCityName: string, forecastDays: number) {
+export function useWeather(
+  originCityName: string,
+  forecastDays: number,
+  sortCriteria?: SortCriteria | null
+) {
+  const criteria = sortCriteria ?? DEFAULT_SORT_CRITERIA;
   const query = useQuery({
-    queryKey: weatherQueryKey(originCityName, forecastDays),
-    queryFn: () => fetchWeatherResponse(originCityName, forecastDays),
+    queryKey: weatherQueryKey(originCityName, forecastDays, criteria),
+    queryFn: () => fetchWeatherResponse(originCityName, forecastDays, criteria),
     staleTime: WEATHER_CACHE_STALE_MS,
     gcTime: WEATHER_CACHE_STALE_MS * 2,
     meta: {
@@ -84,3 +121,5 @@ export function useWeather(originCityName: string, forecastDays: number) {
     dataUpdatedAt: query.dataUpdatedAt,
   };
 }
+
+export { DEFAULT_SORT_CRITERIA };
