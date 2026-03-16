@@ -53,7 +53,7 @@ export function SiteHeader() {
             size='base'
             className='px-4 py-2.5 text-sm font-semibold md:text-base'
           >
-            Explore Weather
+            Destinations
           </ButtonLink>
         </nav>
       </div>
