@@ -90,7 +90,7 @@ function WeatherPageContent() {
   const [openForecastRowIndex, setOpenForecastRowIndex] = useState<
     number | null
   >(null);
-  const [searchControlsOpen, setSearchControlsOpen] = useState(true);
+  const [searchControlsOpen, setSearchControlsOpen] = useState(false);
   const [sortCriteria, setSortCriteria] = useState<SortCriteria>({
     ...DEFAULT_SORT_CRITERIA,
   });
@@ -138,6 +138,17 @@ function WeatherPageContent() {
       cancelled = true;
     };
   }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia('(min-width: 768px)');
+    if (mq.matches) setSearchControlsOpen(true);
+  }, []);
+
+  const searchControlsSummary = `${sortCriteria.idealTemp}°F ideal · ${
+    sortCriteria.scoreWeight >= sortCriteria.distanceWeight
+      ? 'Prioritizing sunshine'
+      : 'Prioritizing distance'
+  }`;
 
   const {
     geoData,
@@ -470,14 +481,21 @@ function WeatherPageContent() {
             <button
               type='button'
               onClick={() => setSearchControlsOpen((o) => !o)}
-              className='flex w-full items-center justify-between rounded-xl py-2 text-left font-semibold text-slate-800 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500/20'
+              className='flex w-full items-center justify-between gap-3 rounded-xl py-2 text-left font-semibold text-slate-800 transition-colors hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-primary-500/20'
               aria-expanded={searchControlsOpen}
             >
-              Search controls
+              <span className='flex min-w-0 flex-col items-start'>
+                <span>Search controls</span>
+                {!searchControlsOpen && (
+                  <span className='mt-0.5 text-sm font-normal text-slate-500'>
+                    {searchControlsSummary}
+                  </span>
+                )}
+              </span>
               {searchControlsOpen ? (
-                <ChevronUp className='h-5 w-5 text-slate-500' />
+                <ChevronUp className='h-5 w-5 shrink-0 text-slate-500' />
               ) : (
-                <ChevronDown className='h-5 w-5 text-slate-500' />
+                <ChevronDown className='h-5 w-5 shrink-0 text-slate-500' />
               )}
             </button>
             {searchControlsOpen && (
