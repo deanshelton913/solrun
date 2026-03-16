@@ -113,7 +113,7 @@ export function OriginCityAutocomplete({
   return (
     <div className={`relative ${className}`} ref={containerRef}>
       {label && <label className='font-semibold text-slate-800'>{label}</label>}
-      <div className='mt-1 flex items-center gap-1 rounded-lg border border-slate-300 bg-white shadow-sm focus-within:border-primary-500 focus-within:ring-1 focus-within:ring-primary-500'>
+      <div className='mt-1 flex items-center gap-1 rounded-xl border border-slate-300 bg-white shadow-card-sm transition-colors focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20'>
         <input
           type='text'
           value={inputValue}
@@ -123,7 +123,7 @@ export function OriginCityAutocomplete({
           }}
           onFocus={() => setOpen(true)}
           placeholder={placeholder}
-          className={`min-w-0 flex-1 rounded-lg border-0 px-3 py-2 text-slate-800 placeholder-slate-400 focus:ring-0 ${inputClassName}`}
+          className={`min-w-0 flex-1 rounded-xl border-0 px-3 py-2 text-slate-800 placeholder-slate-500 focus:ring-0 ${inputClassName}`}
           aria-label={label}
           aria-autocomplete='list'
         />
@@ -155,14 +155,14 @@ export function OriginCityAutocomplete({
         <ul
           id='origin-city-listbox'
           role='listbox'
-          className='absolute z-10 mt-1 max-h-60 w-full min-w-[200px] overflow-auto rounded-lg border border-slate-200 bg-white py-1 shadow-lg sm:min-w-[280px]'
+          className='absolute z-10 mt-1 max-h-60 w-full min-w-[200px] overflow-auto rounded-xl border border-slate-200 bg-white py-1 shadow-card-lg sm:min-w-[280px]'
         >
           {matches.slice(0, 50).map((opt) => (
             <li
               key={opt.name}
               role='option'
               aria-selected={value === opt.name}
-              className='cursor-pointer px-3 py-2 text-slate-800 hover:bg-slate-100'
+              className='cursor-pointer px-3 py-2 text-slate-800 transition-colors hover:bg-primary-50/80'
               onMouseDown={(e) => {
                 e.preventDefault();
                 handleSelect(opt.name);

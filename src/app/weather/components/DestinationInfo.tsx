@@ -21,7 +21,7 @@ export function DestinationInfo({
 
   return (
     <div className={className}>
-      <p className='text-sm text-slate-600'>{text}</p>
+      <p className='text-sm leading-relaxed text-slate-600'>{text}</p>
     </div>
   );
 }

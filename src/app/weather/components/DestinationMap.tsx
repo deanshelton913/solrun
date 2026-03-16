@@ -47,7 +47,7 @@ export function DestinationMap({
       target='_blank'
       rel='noopener noreferrer'
       title='Open in Google Maps'
-      className='group relative block h-full w-full cursor-pointer transition-opacity hover:opacity-95'
+      className='group relative block h-full w-full cursor-pointer transition-opacity duration-200 hover:opacity-95'
     >
       {img}
     </a>

@@ -1,33 +1,45 @@
-@import url('https://fonts.googleapis.com/css2?family=Funnel+Sans:wght@500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Funnel+Sans:wght@500;600;700&family=Syne:wght@600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  /* #region  /**=========== Primary Color (warm amber) =========== */
-  --tw-color-primary-50: 255 251 235;
-  --tw-color-primary-100: 254 243 199;
-  --tw-color-primary-200: 253 230 138;
-  --tw-color-primary-300: 252 211 77;
-  --tw-color-primary-400: 251 191 36;
-  --tw-color-primary-500: 245 158 11;
-  --tw-color-primary-600: 217 119 6;
-  --tw-color-primary-700: 180 83 9;
-  --tw-color-primary-800: 146 64 14;
-  --tw-color-primary-900: 120 53 15;
+  /* Primary: terracotta-sunset (richer, more memorable) */
+  --tw-color-primary-50: 255 248 242;
+  --tw-color-primary-100: 254 235 220;
+  --tw-color-primary-200: 253 213 182;
+  --tw-color-primary-300: 249 179 132;
+  --tw-color-primary-400: 234 138 76;
+  --tw-color-primary-500: 218 100 45;
+  --tw-color-primary-600: 194 72 28;
+  --tw-color-primary-700: 158 52 18;
+  --tw-color-primary-800: 126 40 14;
+  --tw-color-primary-900: 100 32 12;
   --tw-color-primary-950: 69 26 8;
-  --color-primary-50: rgb(var(--tw-color-primary-50)); /* #fffbeb */
-  --color-primary-100: rgb(var(--tw-color-primary-100)); /* #fef3c7 */
-  --color-primary-200: rgb(var(--tw-color-primary-200)); /* #fde68a */
-  --color-primary-300: rgb(var(--tw-color-primary-300)); /* #fcd34d */
-  --color-primary-400: rgb(var(--tw-color-primary-400)); /* #fbbf24 */
-  --color-primary-500: rgb(var(--tw-color-primary-500)); /* #f59e0b */
-  --color-primary-600: rgb(var(--tw-color-primary-600)); /* #d97706 */
-  --color-primary-700: rgb(var(--tw-color-primary-700)); /* #b45309 */
-  --color-primary-800: rgb(var(--tw-color-primary-800)); /* #92400e */
-  --color-primary-900: rgb(var(--tw-color-primary-900)); /* #78350f */
-  /* #endregion  /**======== Primary Color =========== */
+  --color-primary-50: rgb(var(--tw-color-primary-50));
+  --color-primary-100: rgb(var(--tw-color-primary-100));
+  --color-primary-200: rgb(var(--tw-color-primary-200));
+  --color-primary-300: rgb(var(--tw-color-primary-300));
+  --color-primary-400: rgb(var(--tw-color-primary-400));
+  --color-primary-500: rgb(var(--tw-color-primary-500));
+  --color-primary-600: rgb(var(--tw-color-primary-600));
+  --color-primary-700: rgb(var(--tw-color-primary-700));
+  --color-primary-800: rgb(var(--tw-color-primary-800));
+  --color-primary-900: rgb(var(--tw-color-primary-900));
+  --color-primary-950: rgb(var(--tw-color-primary-950));
+
+  /* Surfaces: warm tint for page, card hierarchy */
+  --surface-page: 250 249 247; /* warm gray/cream */
+  --surface-card: 255 255 255;
+
+  /* Card shadow scale */
+  --shadow-card-sm: 0 1px 2px 0 rgb(0 0 0 / 0.04),
+    0 1px 3px -1px rgb(0 0 0 / 0.06);
+  --shadow-card-md: 0 4px 6px -1px rgb(0 0 0 / 0.05),
+    0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-card-lg: 0 10px 15px -3px rgb(0 0 0 / 0.06),
+    0 4px 6px -4px rgb(0 0 0 / 0.04);
 }
 
 @layer base {
@@ -54,7 +66,7 @@
 
   h1,
   .h1 {
-    @apply font-primary text-2xl font-bold md:text-4xl;
+    @apply font-display text-2xl font-bold md:text-4xl;
   }
 
   h2,
@@ -95,6 +107,25 @@
 }
 
 @layer utilities {
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  .animation-delay-150 {
+    animation-delay: 150ms;
+  }
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  .animation-delay-250 {
+    animation-delay: 250ms;
+  }
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+
   .animated-underline {
     background-image: linear-gradient(#33333300, #33333300),
       linear-gradient(

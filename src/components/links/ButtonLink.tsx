@@ -49,10 +49,10 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
         ref={ref}
         {...rest}
         className={cn(
-          'inline-flex items-center rounded font-medium',
-          'focus-visible:ring-primary-500 focus:outline-none focus-visible:ring',
-          'shadow-sm',
-          'transition-colors duration-75',
+          'inline-flex items-center rounded-lg font-medium',
+          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
+          'shadow-card-sm',
+          'transition-all duration-150 ease-out motion-reduce:transition-none',
           //#region  //*=========== Size ===========
           [
             size === 'base' && ['px-3 py-1.5', 'text-sm md:text-base'],
@@ -63,8 +63,8 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
           [
             variant === 'primary' && [
               'bg-primary-500 text-white',
-              'border-primary-600 border',
-              'hover:bg-primary-600 hover:text-white',
+              'border border-primary-600',
+              'hover:bg-primary-600 hover:text-white hover:shadow-card-md hover:scale-[1.02] motion-reduce:scale-100',
               'active:bg-primary-700',
               'disabled:bg-primary-700',
             ],
@@ -83,10 +83,10 @@ const ButtonLink = React.forwardRef<HTMLAnchorElement, ButtonLinkProps>(
                 'hover:bg-gray-900 active:bg-gray-800 disabled:bg-gray-800',
             ],
             variant === 'light' && [
-              'bg-white text-gray-700',
-              'border border-gray-300',
-              'hover:text-dark hover:bg-gray-100',
-              'active:bg-white/80 disabled:bg-gray-200',
+              'bg-white text-slate-700',
+              'border border-slate-300',
+              'hover:text-slate-900 hover:bg-slate-100',
+              'active:bg-white/80 disabled:bg-slate-200',
             ],
             variant === 'dark' && [
               'bg-gray-900 text-white',

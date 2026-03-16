@@ -53,7 +53,7 @@ export function DestinationDetailCard({
 
   if (loading) {
     return (
-      <div className='border border-t-0 border-slate-200 bg-slate-50 px-4 py-8'>
+      <div className='rounded-b-2xl border border-t-0 border-slate-200 bg-slate-50 px-4 py-8'>
         <p className='text-center text-sm text-slate-500'>
           Loading map and destination details…
         </p>
@@ -63,7 +63,7 @@ export function DestinationDetailCard({
 
   if (error) {
     return (
-      <div className='border border-t-0 border-slate-200 bg-red-50 px-4 py-4'>
+      <div className='rounded-b-2xl border border-t-0 border-slate-200 bg-red-50 px-4 py-4'>
         <p className='text-sm text-red-700'>{error}</p>
       </div>
     );
@@ -78,7 +78,7 @@ export function DestinationDetailCard({
   const googleMapsThingsToDoUrl = `https://www.google.com/maps/search/Things+to+do/@${lat},${lon},11z/data=!5m1!1e4?entry=ttu`;
 
   return (
-    <div className='border border-t-0 border-slate-200 bg-white shadow-sm overflow-hidden'>
+    <div className='rounded-b-2xl border border-t-0 border-slate-200 bg-white shadow-card-sm overflow-hidden animate-hero-fade-in motion-reduce:animate-none'>
       <div className='w-full'>
         <div className='grid w-full min-w-0 grid-cols-1 gap-0 md:grid-cols-2 md:grid-rows-[auto_1fr] md:row-gap-0'>
           <div className='min-w-0 md:row-span-2 md:flex md:flex-col'>

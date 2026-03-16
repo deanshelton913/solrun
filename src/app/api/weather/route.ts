@@ -6,6 +6,11 @@ import { topTravelDestinations } from '@/app/api/weather/const';
 import { WeatherService } from '@/app/services/WeatherService';
 import { WEATHER_CACHE_STALE_SECONDS } from '@/constant/cache';
 
+/** Max destinations we fetch weather for (limits API calls). */
+const MAX_DESTINATIONS_TO_FETCH = 25;
+/** Max results returned (top N after ranking). */
+const MAX_WEATHER_RESULTS = 20;
+
 export async function GET(request: NextRequest) {
   const weatherService = Container.get(WeatherService);
 
@@ -13,9 +18,14 @@ export async function GET(request: NextRequest) {
   const originCityName = String(sp.get('originCityName'));
   const days = Number(sp.get('forecastDays'));
 
+  const destinationsToFetch = topTravelDestinations.slice(
+    0,
+    MAX_DESTINATIONS_TO_FETCH
+  );
+
   const geoData = await weatherService.getRankedWeatherLocations({
     originCityName,
-    topTravelDestinations,
+    topTravelDestinations: destinationsToFetch,
     days,
     sortCriteria: {
       idealTemp: 85.0,
@@ -25,7 +35,8 @@ export async function GET(request: NextRequest) {
     },
   });
 
-  const response = NextResponse.json({ geoData });
+  const limitedGeoData = geoData.slice(0, MAX_WEATHER_RESULTS);
+  const response = NextResponse.json({ geoData: limitedGeoData });
   response.headers.set(
     'Cache-Control',
     `public, s-maxage=${WEATHER_CACHE_STALE_SECONDS}, stale-while-revalidate=${

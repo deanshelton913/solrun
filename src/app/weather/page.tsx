@@ -1,7 +1,7 @@
 'use client';
 
 import clsx from 'clsx';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useState } from 'react';
 
@@ -9,6 +9,7 @@ import { AdSenseUnit } from '@/components/ads/AdSenseUnit';
 
 import {
   DestinationDetailCard,
+  ForecastDetail,
   OriginCityAutocomplete,
 } from '@/app/weather/components';
 import { siteConfig } from '@/constant/config';
@@ -78,6 +79,9 @@ function WeatherPageContent() {
 
   const [originCityName, setOriginCityName] = useState(city);
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set());
+  const [openForecastRowIndex, setOpenForecastRowIndex] = useState<
+    number | null
+  >(null);
   const router = useRouter();
 
   const {
@@ -96,42 +100,44 @@ function WeatherPageContent() {
   }
 
   const iconMap = {
-    CLEAR_SKY: <ClearSky className='w-6 h-6' fill='black' />,
-    PARTLY_CLOUDY: <PartlyCloudy className='w-6 h-6' fill='black' />,
-    OVERCAST: <Overcast className='w-6 h-6' fill='black' />,
-    RAIN: <Rain className='w-6 h-6' fill='black' />,
-    SNOW: <Snow className='w-6 h-6' fill='black' />,
-    THUNDERSTORM: <Lightning className='w-6 h-6' fill='black' />,
-    MAINLY_CLEAR: <ClearSky className='w-6 h-6' fill='black' />,
-    DRIZZLE_LIGHT: <Rain className='w-6 h-6' fill='black' />,
-    FOG: <Rain className='w-6 h-6' fill='black' />,
-    RIME_FOG: <Rain className='w-6 h-6' fill='black' />,
-    DRIZZLE_MODERATE: <Rain className='w-6 h-6' fill='black' />,
-    DRIZZLE_DENSE_INTENSITY: <Rain className='w-6 h-6' fill='black' />,
-    FREEZING_DRIZZLE_LIGHT: <Rain className='w-6 h-6' fill='black' />,
-    FREEZING_DRIZZLE_DENSE: <Rain className='w-6 h-6' fill='black' />,
-    RAIN_SLIGHT: <Rain className='w-6 h-6' fill='black' />,
-    RAIN_MODERATE: <Rain className='w-6 h-6' fill='black' />,
-    RAIN_HEAVY: <Rain className='w-6 h-6' fill='black' />,
-    FREEZING_RAIN_LIGHT: <Rain className='w-6 h-6' fill='black' />,
-    FREEZING_RAIN_HEAVY_INTENSITY: <Rain className='w-6 h-6' fill='black' />,
-    SNOW_FALL_SLIGHT: <Snow className='w-6 h-6' fill='black' />,
-    SNOW_FALL_MODERATE: <Snow className='w-6 h-6' fill='black' />,
-    SNOW_FALL_HEAVY_INTENSITY: <Snow className='w-6 h-6' fill='black' />,
-    SNOW_GRAINS: <Snow className='w-6 h-6' fill='black' />,
-    RAIN_SHOWERS_SLIGHT: <Rain className='w-6 h-6' fill='black' />,
-    RAIN_SHOWERS_MODERATE: <Rain className='w-6 h-6' fill='black' />,
-    RAIN_SHOWERS_VIOLENT: <Rain className='w-6 h-6' fill='black' />,
-    SNOW_SHOWERS_SLIGHT: <Snow className='w-6 h-6' fill='black' />,
-    SNOW_SHOWERS_HEAVY: <Snow className='w-6 h-6' fill='black' />,
+    CLEAR_SKY: <ClearSky className='w-6 h-6' fill='currentColor' />,
+    PARTLY_CLOUDY: <PartlyCloudy className='w-6 h-6' fill='currentColor' />,
+    OVERCAST: <Overcast className='w-6 h-6' fill='currentColor' />,
+    RAIN: <Rain className='w-6 h-6' fill='currentColor' />,
+    SNOW: <Snow className='w-6 h-6' fill='currentColor' />,
+    THUNDERSTORM: <Lightning className='w-6 h-6' fill='currentColor' />,
+    MAINLY_CLEAR: <ClearSky className='w-6 h-6' fill='currentColor' />,
+    DRIZZLE_LIGHT: <Rain className='w-6 h-6' fill='currentColor' />,
+    FOG: <Rain className='w-6 h-6' fill='currentColor' />,
+    RIME_FOG: <Rain className='w-6 h-6' fill='currentColor' />,
+    DRIZZLE_MODERATE: <Rain className='w-6 h-6' fill='currentColor' />,
+    DRIZZLE_DENSE_INTENSITY: <Rain className='w-6 h-6' fill='currentColor' />,
+    FREEZING_DRIZZLE_LIGHT: <Rain className='w-6 h-6' fill='currentColor' />,
+    FREEZING_DRIZZLE_DENSE: <Rain className='w-6 h-6' fill='currentColor' />,
+    RAIN_SLIGHT: <Rain className='w-6 h-6' fill='currentColor' />,
+    RAIN_MODERATE: <Rain className='w-6 h-6' fill='currentColor' />,
+    RAIN_HEAVY: <Rain className='w-6 h-6' fill='currentColor' />,
+    FREEZING_RAIN_LIGHT: <Rain className='w-6 h-6' fill='currentColor' />,
+    FREEZING_RAIN_HEAVY_INTENSITY: (
+      <Rain className='w-6 h-6' fill='currentColor' />
+    ),
+    SNOW_FALL_SLIGHT: <Snow className='w-6 h-6' fill='currentColor' />,
+    SNOW_FALL_MODERATE: <Snow className='w-6 h-6' fill='currentColor' />,
+    SNOW_FALL_HEAVY_INTENSITY: <Snow className='w-6 h-6' fill='currentColor' />,
+    SNOW_GRAINS: <Snow className='w-6 h-6' fill='currentColor' />,
+    RAIN_SHOWERS_SLIGHT: <Rain className='w-6 h-6' fill='currentColor' />,
+    RAIN_SHOWERS_MODERATE: <Rain className='w-6 h-6' fill='currentColor' />,
+    RAIN_SHOWERS_VIOLENT: <Rain className='w-6 h-6' fill='currentColor' />,
+    SNOW_SHOWERS_SLIGHT: <Snow className='w-6 h-6' fill='currentColor' />,
+    SNOW_SHOWERS_HEAVY: <Snow className='w-6 h-6' fill='currentColor' />,
     THUNDERSTORM_SLIGHT_OR_MODERATE: (
-      <Lightning className='w-6 h-6' fill='black' />
+      <Lightning className='w-6 h-6' fill='currentColor' />
     ),
     THUNDERSTORM_WITH_SLIGHT_HAIL: (
-      <Lightning className='w-6 h-6' fill='black' />
+      <Lightning className='w-6 h-6' fill='currentColor' />
     ),
     THUNDERSTORM_WITH_HEAVY_HAIL: (
-      <Lightning className='w-6 h-6' fill='black' />
+      <Lightning className='w-6 h-6' fill='currentColor' />
     ),
   };
 
@@ -193,7 +199,14 @@ function WeatherPageContent() {
       const isExpanded = expandedRows.has(index);
 
       const row = (
-        <div key={`${item.cityName}-${index}`} className='space-y-0'>
+        <div
+          key={`${item.cityName}-${index}`}
+          className='animate-stagger-in space-y-0 opacity-0 motion-reduce:animate-none motion-reduce:opacity-100'
+          style={{
+            animationDelay: `${60 + index * 50}ms`,
+            animationFillMode: 'both',
+          }}
+        >
           <div
             role='button'
             tabIndex={0}
@@ -205,21 +218,23 @@ function WeatherPageContent() {
               }
             }}
             className={clsx(
-              'flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-shadow cursor-pointer hover:shadow-md',
+              'flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-card-sm transition-all duration-200 cursor-pointer hover:shadow-card-md hover:-translate-y-0.5 motion-reduce:transform-none motion-reduce:transition-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2',
               isExpanded && 'rounded-b-none'
             )}
           >
             <div className='flex items-center gap-2'>
-              {isExpanded ? (
-                <ChevronUp className='h-5 w-5 shrink-0 text-slate-400' />
-              ) : (
-                <ChevronDown className='h-5 w-5 shrink-0 text-slate-400' />
-              )}
+              <ChevronDown
+                className={clsx(
+                  'h-5 w-5 shrink-0 text-slate-400 transition-transform duration-200 motion-reduce:transition-none',
+                  isExpanded && 'rotate-180'
+                )}
+                aria-hidden
+              />
               <div className='flex items-start space-x-4'>
                 <span
-                  className={clsx('text-sm space-x-4', {
+                  className={clsx('text-xl font-bold tabular-nums', {
                     'text-amber-500': item.averageTemp < 75,
-                    'text-orange-500':
+                    'text-primary-500':
                       item.averageTemp >= 75 && item.averageTemp <= 90,
                     'text-red-500': item.averageTemp > 90,
                   })}
@@ -236,37 +251,68 @@ function WeatherPageContent() {
               {kilometersToHoursAway(item.distance).mode})
             </div>
 
-            <div className='flex flex-wrap items-center justify-end gap-3 flex-grow'>
-              <div
-                className='flex items-center rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 transition-colors hover:border-primary-300 hover:bg-primary-50/50'
-                onClick={(e) => e.stopPropagation()}
-                role='presentation'
-              >
-                <a
-                  href={`https://open-meteo.com/en/docs?latitude=${item.latitude}&longitude=${item.longitude}&forecast_days=${forecastDays}`}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  title={`Full ${forecastDays}-day forecast for ${item.cityName} (Open-Meteo)`}
-                  className='flex items-center gap-0.5 cursor-pointer'
-                  aria-label={`Open full ${forecastDays}-day weather forecast for ${item.cityName}`}
+            <div
+              className='flex flex-wrap items-center justify-end gap-3 flex-grow'
+              onClick={(e) => e.stopPropagation()}
+              role='presentation'
+            >
+              <div className='flex flex-col items-end gap-2'>
+                <button
+                  type='button'
+                  onClick={() =>
+                    setOpenForecastRowIndex(
+                      openForecastRowIndex === index ? null : index
+                    )
+                  }
+                  className={clsx(
+                    'flex items-center gap-0.5 rounded-lg border border-slate-200 bg-slate-50/50 px-3 py-2 transition-all duration-200 hover:scale-[1.02] hover:border-primary-300 hover:bg-primary-50/50 motion-reduce:hover:scale-100 [&>span]:[&>svg]:h-5 [&>span]:[&>svg]:w-5',
+                    openForecastRowIndex === index &&
+                      'border-primary-300 bg-primary-50/50'
+                  )}
+                  aria-expanded={openForecastRowIndex === index}
+                  aria-label={`${forecastDays}-day forecast for ${
+                    item.cityName
+                  }. Click to ${
+                    openForecastRowIndex === index ? 'close' : 'view'
+                  } details.`}
                 >
-                  {item.forecast.map((forecast, i) => (
-                    <span
-                      key={`${forecast}-${
-                        // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-                        i
-                      }`}
-                      className='flex h-6 w-6 shrink-0 items-center justify-center cursor-pointer'
-                      title={
-                        forecastLabels[
-                          forecast as keyof typeof forecastLabels
-                        ] ?? forecast
-                      }
-                    >
-                      {iconMap[forecast as keyof typeof iconMap]}
-                    </span>
-                  ))}
-                </a>
+                  {item.forecast.map((forecastCode, i) => {
+                    const isIdeal =
+                      forecastCode === 'CLEAR_SKY' ||
+                      forecastCode === 'MAINLY_CLEAR';
+                    return (
+                      <span
+                        key={`${forecastCode}-${
+                          // biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+                          i
+                        }`}
+                        className={clsx(
+                          'flex h-6 w-6 shrink-0 items-center justify-center',
+                          isIdeal ? 'text-primary-500' : 'text-slate-400'
+                        )}
+                        title={
+                          forecastLabels[
+                            forecastCode as keyof typeof forecastLabels
+                          ] ?? forecastCode
+                        }
+                      >
+                        {iconMap[forecastCode as keyof typeof iconMap]}
+                      </span>
+                    );
+                  })}
+                </button>
+                {openForecastRowIndex === index && (
+                  <ForecastDetail
+                    cityName={item.cityName}
+                    forecast={item.forecast}
+                    dailyHighs={item.dailyHighs}
+                    forecastLabels={forecastLabels}
+                    iconMap={iconMap}
+                    latitude={item.latitude}
+                    longitude={item.longitude}
+                    className='min-w-[220px]'
+                  />
+                )}
               </div>
               {compareFlightsUrl && (
                 <a
@@ -274,7 +320,7 @@ function WeatherPageContent() {
                   target='_blank'
                   rel='noopener noreferrer'
                   onClick={(e) => e.stopPropagation()}
-                  className='inline-flex shrink-0 items-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm font-medium text-slate-700 shadow-sm transition-colors hover:border-primary-400 hover:bg-primary-50 hover:text-primary-700'
+                  className='inline-flex shrink-0 items-center rounded-lg bg-primary-500 px-4 py-2.5 text-sm font-semibold text-white shadow-card-sm transition-all duration-200 hover:bg-primary-600 hover:shadow-card-md hover:scale-[1.02] motion-reduce:transform-none focus-visible:ring-2 focus-visible:ring-primary-500 focus-visible:ring-offset-2'
                 >
                   Book Flight
                 </a>
@@ -308,14 +354,19 @@ function WeatherPageContent() {
 
   return (
     <main className='flex-1'>
-      {/* Hero strip - matches homepage */}
-      <section className='relative overflow-hidden bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 px-4 py-10 md:py-14'>
-        <div className='absolute inset-0 bg-white/5' aria-hidden />
-        <div className='layout relative text-center'>
-          <h1 className='font-primary text-3xl font-bold tracking-tight text-white drop-shadow-sm md:text-4xl'>
+      {/* Hero strip — same beach BG as homepage */}
+      <section className='relative overflow-hidden bg-primary-500 px-4 py-10 md:py-14'>
+        <div
+          className='absolute inset-0 bg-cover bg-center bg-no-repeat'
+          style={{ backgroundImage: 'url("/images/header-bg.jpg")' }}
+          aria-hidden
+        />
+        <div className='absolute inset-0 bg-primary-900/50' aria-hidden />
+        <div className='layout relative text-center animate-hero-fade-in motion-reduce:animate-none'>
+          <h1 className='font-display text-3xl font-bold tracking-tight text-white drop-shadow-sm md:text-4xl'>
             Go Somewhere Warm
           </h1>
-          <p className='mt-2 text-amber-50 md:text-lg'>
+          <p className='mt-2 text-white/95 md:text-lg'>
             Discover the best destinations with ideal weather over the next{' '}
             {forecastDays} days.
           </p>
@@ -331,7 +382,7 @@ function WeatherPageContent() {
           </div>
         )}
 
-        <div className='mb-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm'>
+        <div className='mb-6 animate-scale-in rounded-2xl border border-slate-200 bg-white p-6 shadow-card-sm motion-reduce:animate-none'>
           <div className='flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between'>
             <div className='w-full sm:w-auto sm:min-w-[280px]'>
               <OriginCityAutocomplete
@@ -347,7 +398,7 @@ function WeatherPageContent() {
                 Forecast days
               </label>
               <select
-                className='mt-1 block w-full rounded-lg border border-slate-300 px-3 py-2 text-slate-800 shadow-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500 sm:w-auto'
+                className='mt-1 block w-full rounded-xl border border-slate-300 px-3 py-2 text-slate-800 shadow-card-sm transition-colors focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 sm:w-auto'
                 value={forecastDays}
                 onChange={(e) => setForecastDays(Number(e.target.value))}
               >
@@ -362,14 +413,20 @@ function WeatherPageContent() {
         </div>
 
         {weatherLoading ? (
-          <div className='rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm'>
-            <p className='text-slate-600'>Loading weather and destinations…</p>
+          <div className='animate-scale-in rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-card-sm motion-reduce:animate-none'>
+            <div
+              className='mx-auto h-10 w-10 animate-spin rounded-full border-2 border-primary-200 border-t-primary-500'
+              aria-hidden
+            />
+            <p className='mt-4 text-slate-600'>
+              Loading weather and destinations…
+            </p>
             <p className='mt-2 text-sm text-slate-500'>
               This can take 15–30 seconds.
             </p>
           </div>
         ) : geoData.length === 0 ? (
-          <div className='rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-sm'>
+          <div className='rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-card-sm'>
             <p className='text-slate-600'>
               No destinations found. Try another city or check the server.
             </p>
@@ -387,12 +444,18 @@ export default function WeatherPage() {
     <Suspense
       fallback={
         <main className='flex-1'>
-          <section className='relative overflow-hidden bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500 px-4 py-10 md:py-14'>
+          <section className='relative overflow-hidden bg-primary-500 px-4 py-10 md:py-14'>
+            <div
+              className='absolute inset-0 bg-cover bg-center bg-no-repeat'
+              style={{ backgroundImage: 'url("/images/header-bg.jpg")' }}
+              aria-hidden
+            />
+            <div className='absolute inset-0 bg-primary-900/50' aria-hidden />
             <div className='layout relative text-center'>
-              <h1 className='font-primary text-3xl font-bold tracking-tight text-white drop-shadow-sm md:text-4xl'>
+              <h1 className='font-display text-3xl font-bold tracking-tight text-white drop-shadow-sm md:text-4xl'>
                 Go Somewhere Warm
               </h1>
-              <p className='mt-2 text-amber-50'>Loading…</p>
+              <p className='mt-2 text-white/95'>Loading…</p>
             </div>
           </section>
         </main>

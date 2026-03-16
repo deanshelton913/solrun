@@ -11,6 +11,8 @@ export interface WeatherGeoData {
   cityName: string;
   averageTemp: number;
   forecast: string[];
+  /** Daily high temps (°F), one per forecast day. May be missing for older cached responses. */
+  dailyHighs?: number[];
   iataCode: string;
   distance: number;
   normalizedDistance: number;

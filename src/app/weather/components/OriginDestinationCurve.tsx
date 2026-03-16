@@ -51,7 +51,7 @@ export function OriginDestinationCurve({
           target='_blank'
           rel='noopener noreferrer'
           title='Open route in Google Maps'
-          className='block h-full w-full cursor-pointer transition-opacity hover:opacity-95'
+          className='block h-full w-full cursor-pointer transition-opacity duration-200 hover:opacity-95'
         >
           {img}
         </a>

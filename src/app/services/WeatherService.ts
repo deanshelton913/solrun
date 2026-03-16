@@ -6,6 +6,7 @@ import { GeocoderService } from '@/app/services/GeocoderService';
 
 interface AnemicSingleWeatherReport {
   forecast: string[];
+  dailyHighs: number[];
   weatherScore: number;
   latitude: number;
   longitude: number;
@@ -154,8 +155,11 @@ export class WeatherService {
     const weatherScore = weatherCodes.reduce((a, b) => a + b, 0);
     const forecast = weatherCodes.map(this.weatherCodeToEnglish);
     forecast.shift(); // Remove today. We requested N+1 days!
+    temps.shift(); // Align with forecast (drop today)
+    const dailyHighs = temps;
     return {
       forecast,
+      dailyHighs,
       weatherScore,
       latitude: lat,
       longitude: lon,
