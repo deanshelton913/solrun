@@ -485,7 +485,7 @@ function WeatherPageContent() {
               aria-expanded={searchControlsOpen}
             >
               <span className='flex min-w-0 flex-col items-start'>
-                <span>Search controls</span>
+                <span>Advanced controls</span>
                 {!searchControlsOpen && (
                   <span className='mt-0.5 text-sm font-normal text-slate-500'>
                     {searchControlsSummary}
